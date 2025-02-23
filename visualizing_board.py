@@ -21,55 +21,62 @@ pygame.display.set_caption('Resizable Chess Board')
 piece_image_original = pygame.image.load('pictures/black_pawn.png')
 
 piece_images_black = {
-    "pawn": "pictures/black_pawn.png",
-    "rook": "pictures/black_rook.png",
-    "knight": "pictures/black_knight.png",
-    "bishop": "pictures/black_bishop.png",
-    "queen": "pictures/black_queen.png",
-    "king": "pictures/black_king.png"
+    "P": "pictures/black_pawn.png",
+    "R": "pictures/black_rook.png",
+    "H": "pictures/black_horse.png",
+    "B": "pictures/black_bishop.png",
+    "Q": "pictures/black_queen.png",
+    "K": "pictures/black_king.png"
+}
+
+piece_images_white = {
+    "P": "pictures/white_pawn.png",
+    "R": "pictures/white_rook.png",
+    "H": "pictures/white_horse.png",
+    "B": "pictures/white_bishop.png",
+    "Q": "pictures/white_queen.png",
+    "K": "pictures/white_king.png"
 }
 
 
-
-
-
-def draw_board(win, width, height):
-    square_size = min(width, height) // COLS  # Ensure squares remain square-shaped
-    win.fill(WHITE)  # Fill background with white to avoid artifacts
+def draw_game_board(game, selected_squares=None):
+    global WIN, ROWS, COLS, WHITE, BLACK
+    if selected_squares is None:
+        selected_squares = set()
+        
+    # Retrieve the current window size
+    width, height = WIN.get_size()
+    square_size = min(width, height) // COLS  # ensures squares remain square
 
     for row in range(ROWS):
         for col in range(COLS):
-            rect = (col * square_size, row * square_size, square_size, square_size)
-            if (row + col) % 2 == 1:
-                pygame.draw.rect(win, BLACK, rect)
+            # If this square is selected, use the uniform yellow color.
+            if (row, col) in selected_squares:
+                board_color = (255, 255, 128)  # uniform yellow tone
+            else:
+                board_color = WHITE if (row + col) % 2 == 0 else BLACK
 
-    # Resize and draw the piece on square (1, 0)
-    piece_image = pygame.transform.scale(piece_image_original, (square_size, square_size))
-    win.blit(piece_image, (1 * square_size, 0 * square_size))
+            square_rect = (col * square_size, row * square_size, square_size, square_size)
+            pygame.draw.rect(WIN, board_color, square_rect)
 
+            # Draw the piece if there is one on the square.
+            board = game.get_board()
+            square = board.get_square(row, col)
+            if square.has_piece():
+                piece = square.get_piece()
+                colour = piece.get_colour()
+                piece_type = piece.get_letter()  # using piece_type instead of 'type'
+                
+                # Look up the file path from the dictionaries
+                if colour == "Black":
+                    image_path = piece_images_black[piece_type]
+                elif colour == "White":
+                    image_path = piece_images_white[piece_type]
+                else:
+                    image_path = None
 
-def main():
-    clock = pygame.time.Clock()
-    running = True
-    width, height = INITIAL_WIDTH, INITIAL_HEIGHT
-    global WIN
-
-    while running:
-        clock.tick(60)  # Limit the frame rate to 60 FPS
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            elif event.type == pygame.VIDEORESIZE:
-                width, height = event.w, event.h
-                WIN = pygame.display.set_mode((width, height), pygame.RESIZABLE)
-
-        draw_board(WIN, width, height)
-        pygame.display.flip()  # Update the display
-
-    pygame.quit()
-    sys.exit()
-
-
-if __name__ == '__main__':
-    main()
+                if image_path is not None:
+                    # Load and scale the image to fit the square
+                    image = pygame.image.load(image_path)
+                    piece_image_scaled = pygame.transform.scale(image, (square_size, square_size))
+                    WIN.blit(piece_image_scaled, (col * square_size, row * square_size))
