@@ -10,7 +10,6 @@ def main():
     global WIN
     previous_press = None
 
-
     # Use a set to store selected squares. Each element is a tuple: (row, col)
     selected_squares = set()
 

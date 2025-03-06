@@ -8,6 +8,62 @@ class Piece:
         self.moved_last_turn = False
         self.has_moved = False
 
+    def Rock_direction(self, game, x, y, x_offseter, y_offseter):
+
+        board = game.get_board()
+        allowed_moves = set()
+        
+        for i in range(1, 8):
+
+            cur_x = x + x_offseter*i
+            cur_y = y + y_offseter*i
+
+            if not(0 <= cur_x <= 7 and 0 <= cur_y <= 7):
+                break
+
+            current_square = board.get_square(cur_x, cur_y)
+            
+            if current_square.has_piece() != True:
+                allowed_moves.add((cur_x, cur_y))
+            else:
+                piece = current_square.get_piece()
+                colour = piece.get_colour()
+                if self.colour != colour:
+                    allowed_moves.add((cur_x, cur_y))
+                break
+
+        return allowed_moves
+
+    def Bischop_direction(self, game, x, y, x_offseter, y_offseter):
+    
+        allowed_moves = set()
+        board = game.get_board()
+
+        # Offset upper_left
+        for i in range(1,8):
+            cur_x = x + x_offseter*i
+            cur_y = y + y_offseter*i 
+            
+            if not (0 <= cur_x <= 7 and 0 <= cur_y <= 7):
+                break
+        
+            cur_square = board.get_square(cur_x, cur_y)
+            
+            if cur_square.has_piece() == False:
+                allowed_moves.add((cur_x, cur_y))
+                continue
+            
+            piece = cur_square.get_piece()
+            colour = piece.get_colour()
+            
+            if self.colour == colour:
+                break
+
+            allowed_moves.add((cur_x, cur_y))
+            break
+
+        return allowed_moves
+    
     def get_letter(self):
         return self.letter
     
@@ -36,32 +92,7 @@ class Rook(Piece):
         moves = [(1,0), (-1,0), (0,1), (0,-1)]
 
         for move in moves:
-            allowed_moves = allowed_moves | self.Rock_direction(game, x, y, move[0], move[y])
-
-        return allowed_moves
-
-    def Rock_direction(self, game, x, y, x_offseter, y_offseter):
-
-        board = game.get_board()
-        allowed_moves = set()
-        for i in range(1, 8):
-
-            cur_x = x + x_offseter*i
-            cur_y = y + y_offseter*i
-
-            if not(0 <= cur_x <= 7 and 0 <= cur_y <= 7):
-                break
-
-            current_square = board.get_square(cur_x, cur_y)
-            
-            if current_square.has_piece() != True:
-                allowed_moves.add((cur_x, cur_y))
-            else:
-                piece = current_square.geT_piece()
-                colour = piece.get_colour()
-                if self.colour != colour:
-                    allowed_moves.add((cur_x, cur_y))
-                break
+            allowed_moves = allowed_moves | self.Rock_direction(game, x, y, move[0], move[1])
 
         return allowed_moves
 
@@ -108,41 +139,26 @@ class Bishop(Piece):
             allowed_moves = allowed_moves | self.Bischop_direction(game, x, y, move[0], move[1])
         return allowed_moves
 
-    def Bischop_direction(self, game, x, y, x_offseter, y_offseter):
-    
-        allowed_moves = set()
-        board = game.get_board()
-
-        # Offset upper_left
-        for i in range(1,8):
-            cur_x = x + x_offseter*i
-            cur_y = y + y_offseter*i 
-            
-            if not (0 <= cur_x <= 7 and 0 <= cur_y <= 7):
-                break
-        
-            cur_square = board.get_square(cur_x, cur_y)
-            
-            if cur_square.has_piece() == False:
-                allowed_moves.add((cur_x, cur_y))
-                continue
-            
-            piece = cur_square.get_piece()
-            colour = piece.get_colour()
-            
-            if self.colour == colour:
-                break
-
-            allowed_moves.add((cur_x, cur_y))
-            break
-
-        return allowed_moves
-
 class Queen(Piece):
     
     def __init__(self, colour):
         super().__init__(colour)  # Initialize x and y using the parent class constructor
         self.letter = "Q"
+
+    def allowed_moves(self, x, y, game):
+        
+        allowed_moves = set()
+        board = game.get_board()
+        moves = [(1,0), (-1,0), (0,1), (0,-1)]
+
+        for move in moves:
+            allowed_moves = allowed_moves | self.Rock_direction(game, x, y, move[0], move[1])
+
+        moves = [(1,1), (1,-1), (-1,1), (-1,-1)]
+        for move in moves:
+            allowed_moves = allowed_moves | self.Bischop_direction(game, x, y, move[0], move[1])
+
+        return allowed_moves
 
 class King(Piece):
     
