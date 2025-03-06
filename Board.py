@@ -10,10 +10,10 @@ class Board:
         for i in range(8):
             for j in range(8):
                 
-                if i == 0 or i == 1:
+                if i == 6 or i == 7:
                     piece_color = "White"  # Changed 'type' to 'piece_color' for clarity
                 
-                elif i == 6 or i == 7:  # Fixed row condition for Black pieces
+                elif i == 0 or i == 1:  # Fixed row condition for Black pieces
                     piece_color = "Black"
                 else:
                     piece_color = None

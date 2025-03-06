@@ -4,8 +4,7 @@ class Player:
 
         self.colour = colour
 
-    def colour(self):
-        
+    def get_colour(self):
         return self.colour        
 
 

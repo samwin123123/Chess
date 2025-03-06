@@ -8,30 +8,39 @@ def main():
     clock = pygame.time.Clock()
     running = True
     global WIN
+    previous_press = None
+
 
     # Use a set to store selected squares. Each element is a tuple: (row, col)
     selected_squares = set()
 
     while running:
         for event in pygame.event.get():
+            
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.VIDEORESIZE:
                 WIN = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
             
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                selected_squares = set()
-                # Determine which square was clicked.
-                x, y = event.pos
+                
+                x, y = event.pos    
                 width, height = WIN.get_size()
                 square_size = min(width, height) // COLS
                 col = x // square_size
                 row = y // square_size
-                board = game.get_board()
-                square = board.get_square(row, col)
-                if square.has_piece() == True:
-                    piece = square.get_piece()
-                    selected_squares = piece.allowed_moves(row, col)
+                
+                if (row, col) in selected_squares:
+
+                    game.make_move(previous_press, (row, col))
+                    selected_squares = ()
+
+                else:
+                    selected_squares = set()
+                    # Determine which square was clicked.
+                    selected_squares = game.allowed_moves_for_that_square(row,col)
+
+                    previous_press = (row, col)
 
         draw_game_board(game, selected_squares)
         pygame.display.flip()
