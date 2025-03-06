@@ -166,17 +166,16 @@ class King(Piece):
         super().__init__(colour)  # Initialize x and y using the parent class constructor
         self.letter = "K"
 
-
     def allowed_moves(self, x, y, game):
         
         allowed_moves = set()
-
+        
         board = game.get_board()
         moves_to_check = [(1,0), (-1,0), (0,1), (0,-1)]
 
         for move in moves_to_check:
             cur_x = x + move[0]
-            cur_y = y + move[0]
+            cur_y = y + move[1]
 
             if 0 <= cur_x <= 7 and 0 <= cur_y <= 7:
 
@@ -185,6 +184,7 @@ class King(Piece):
                 if cur_square.has_piece() == False:
                     allowed_moves.add((cur_x, cur_y))
                     continue
+
                 piece = cur_square.get_piece()
                 colour = piece.get_colour()
                 
