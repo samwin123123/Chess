@@ -30,10 +30,8 @@ def main():
                 row = y // square_size
                 
                 if (row, col) in selected_squares:
-
                     game.make_move(previous_press, (row, col))
                     selected_squares = ()
-
                 else:
                     selected_squares = set()
                     # Determine which square was clicked.

@@ -13,6 +13,16 @@ class Game:
         self.not_current_player = self.black_player
         self.game_state = True
 
+    def get_current_player(self):
+
+        return self.current_player
+    
+    def get_board(self):
+        return self.board
+
+    def get_state(self):
+        return self.game_state
+
     def change_player(self):
 
         if self.current_player.get_colour() == "White":
@@ -34,6 +44,8 @@ class Game:
                 return set()
             else:
                 potential_moves = piece.allowed_moves(x, y, self)
+                converted_ones = self.convert_allowed_moves(potential_moves)
+                return converted_ones
                 for move in potential_moves:
                     move_okey = self.check_chess((x,y), move)
                     if move_okey == True:
@@ -117,15 +129,20 @@ class Game:
                     
         return allowed_move
 
-    def get_current_player(self):
+    def convert_allowed_moves(self, allowed_moves):
 
-        return self.current_player
-    
-    def get_board(self):
-        return self.board
+        converted_allowed_moves = set()
 
-    def get_state(self):
-        return self.game_state
+        for move in allowed_moves:
+            cur_x = move[0]
+            cur_y = move[1]
+            if cur_y == 8:
+                cur_y = 6
+            elif cur_y == -1:
+                cur_y = 1
+            converted_allowed_moves.add((cur_x, cur_y))
+
+        return converted_allowed_moves
 
     def __str__(self):
         string_from_board = self.get_board().print()

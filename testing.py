@@ -1,7 +1,2 @@
-a = 8
-
-
-if 0<=a<=7:
-    print("hej")
-else:
-    print("shit")
+for i in range(8,1,-1):
+    print(i)

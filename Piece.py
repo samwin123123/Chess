@@ -79,6 +79,9 @@ class Piece:
     def set_has_moved(self):
         self.has_moved = True
 
+    def get_has_moved(self):
+        return self.has_moved
+    
 class Rook(Piece):
     
     def __init__(self, colour):
@@ -190,6 +193,40 @@ class King(Piece):
                 
                 if self.colour != colour:
                     allowed_moves.add((cur_x, cur_y))
+
+
+        if self.has_moved == True:
+            return allowed_moves
+
+        add_move = True
+        for cur_y in range(y + 1, 7):
+            cur_square = board.get_square(x, cur_y)
+            if cur_square.has_piece() == True:
+                add_move = False
+
+        if add_move == True:
+            possible_rock_square = board.get_square(x, 7)
+            if possible_rock_square.has_piece() == True:
+                piece = possible_rock_square.get_piece()
+                if piece.get_has_moved() == False:
+
+                    allowed_moves.add((cur_x, 8))
+
+        add_move = True
+
+        for cur_y in range(y - 1, 0, -1):
+        
+            cur_square = board.get_square(x, cur_y)
+            if cur_square.has_piece() == True:
+                add_move = False
+
+        if add_move == True:
+            possible_rock_square = board.get_square(x, 0)
+            if possible_rock_square.has_piece() == True:
+                piece = possible_rock_square.get_piece()
+                if piece.get_has_moved() == False:
+                    
+                    allowed_moves.add((cur_x, -1))
 
         return allowed_moves
 
